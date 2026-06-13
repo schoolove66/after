@@ -154,8 +154,11 @@ function App() {
 
   return (
     <>
-      <div className="glass-panel">
-        <h1>축구공 랜덤 뽑기 ⚽</h1>
+      <div className="color-block-section">
+        <h1 style={{ marginBottom: 0 }}>랜덤 발표자 뽑기</h1>
+        <p className="eyebrow" style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)' }}>
+          Fair & Random Selection
+        </p>
         
         {/* 학생 관리 영역 */}
         <div className="input-group">
@@ -167,24 +170,26 @@ function App() {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
             />
-            <button type="submit" className="btn-primary">추가</button>
+            <button type="submit" className="btn-secondary">추가</button>
           </form>
           
           <div className="student-list">
             {students.length === 0 ? (
-              <p style={{ color: '#666', fontStyle: 'italic', padding: '0.5rem' }}>학생을 추가해주세요...</p>
+              <p style={{ color: 'rgba(0,0,0,0.5)', padding: '8px' }}>학생을 추가해주세요...</p>
             ) : (
               students.map(student => (
                 <div key={student} className="student-badge">
                   {student}
-                  <button onClick={() => handleRemoveStudent(student)}>×</button>
+                  <button onClick={() => handleRemoveStudent(student)}>
+                    ×
+                  </button>
                 </div>
               ))
             )}
           </div>
         </div>
 
-        <hr style={{ border: 'none', borderTop: '1px solid var(--glass-border)', margin: '1rem 0' }} />
+        <hr style={{ border: 'none', borderTop: '1px solid var(--hairline)', margin: 'var(--spacing-md) 0' }} />
 
         {/* 추출 설정 영역 */}
         <div className="input-group">
@@ -196,14 +201,14 @@ function App() {
               max={Math.max(1, students.length)}
               value={extractCount}
               onChange={(e) => setExtractCount(parseInt(e.target.value) || 1)}
-              style={{ width: '100px', fontSize: '1.2rem', textAlign: 'center' }}
+              style={{ width: '120px', fontSize: '20px', textAlign: 'center' }}
             />
-            <span style={{ fontSize: '1.2rem', fontWeight: 600 }}>명</span>
+            <span style={{ fontSize: '20px', fontWeight: 500 }}>명</span>
           </div>
         </div>
 
-        <button className="btn-large pulse" onClick={handleExtract}>
-          뽑기 시작! 🥅
+        <button className="btn-primary" onClick={handleExtract} style={{ alignSelf: 'flex-start', marginTop: 'var(--spacing-md)' }}>
+          뽑기 시작! ⚽
         </button>
       </div>
 
@@ -216,31 +221,32 @@ function App() {
 
       {/* 비밀 모달 */}
       <div className={`modal-overlay ${isSecretModalOpen ? 'open' : ''}`}>
-        <div className="secret-modal">
+        <div className="color-block-section navy secret-modal">
           <button className="close-btn" onClick={() => setIsSecretModalOpen(false)}>×</button>
-          <h2>비밀 설정창 🤫</h2>
-          <p style={{ marginBottom: '1rem', color: '#b2bec3', fontSize: '0.9rem' }}>
-            다음에 무조건 당첨될 학생 이름을 순서대로 미리 넣어두세요.
+          <h2>비밀 설정창</h2>
+          <p className="eyebrow" style={{ color: 'var(--inverse-ink)', opacity: 0.8 }}>
+            다음 당첨자 강제 지정
           </p>
           
-          <form onSubmit={handleAddSecret} className="input-row" style={{ marginBottom: '1rem' }}>
+          <form onSubmit={handleAddSecret} className="input-row" style={{ marginBottom: 'var(--spacing-md)' }}>
             <input 
               type="text" 
-              placeholder="당첨될 학생 이름" 
+              placeholder="학생 이름" 
               value={secretInput}
               onChange={(e) => setSecretInput(e.target.value)}
+              style={{ backgroundColor: 'var(--inverse-canvas)', color: 'var(--inverse-ink)', border: '1px solid #485460' }}
             />
-            <button type="submit" className="btn-primary">예약</button>
+            <button type="submit" className="btn-primary" style={{ backgroundColor: 'var(--canvas)', color: 'var(--inverse-canvas)' }}>예약</button>
           </form>
 
           <div className="student-list" style={{ background: 'rgba(0,0,0,0.3)', maxHeight: '150px' }}>
             {secretQueue.length === 0 ? (
-              <p style={{ color: '#636e72', fontSize: '0.9rem' }}>예약된 학생이 없습니다.</p>
+              <p style={{ color: '#636e72', fontSize: '14px' }}>예약된 학생이 없습니다.</p>
             ) : (
               secretQueue.map((name, idx) => (
-                <div key={`${name}-${idx}`} className="student-badge" style={{ background: '#2d3436', color: '#fff' }}>
+                <div key={`${name}-${idx}`} className="student-badge" style={{ background: '#2d3436', color: '#fff', border: 'none' }}>
                   {idx + 1}. {name}
-                  <button onClick={() => handleRemoveSecret(idx)}>×</button>
+                  <button onClick={() => handleRemoveSecret(idx)} style={{ color: '#ff7675' }}>×</button>
                 </div>
               ))
             )}
@@ -251,31 +257,31 @@ function App() {
       {/* 애니메이션 오버레이 */}
       {isAnimating && (
         <div className={`animation-overlay animate-kick`}>
-          <div className="goalpost">🥅</div>
-          <div className="goalkeeper">🧤</div>
-          <div className="player">🏃‍♂️</div>
+          <div className="goalkeeper ai-element"></div>
+          <div className="player ai-element"></div>
+          
           <div className="ball-container">
             {students.map((student, idx) => {
               const isWinner = winners.includes(student);
               const loserClass = `loser-ball-${(idx % 3) + 1}`;
               const animationClass = isWinner ? 'winner-ball' : loserClass;
               
-              // 약간의 오프셋을 주어 공들이 겹쳐서 자연스럽게 퍼지도록 함
               const style = {
                 transform: `translateX(${(idx % 5) * 5 - 10}px) translateY(${(idx % 3) * 5 - 5}px)`
               };
 
               return (
                 <div key={student} className={`custom-ball ${animationClass}`} style={style}>
-                  {student}
+                  <span>{student}</span>
                 </div>
               );
             })}
           </div>
           
           {showResultPopup && (
-            <div className="result-popup">
-              <p>🎉 축하합니다! 🎉</p>
+            <div className="result-popup color-block-section lilac">
+              <p className="eyebrow" style={{ textAlign: 'center' }}>🎉 Winner Selected 🎉</p>
+              <h2>축하합니다!</h2>
               <div className="winners-list">
                 {winners.map(winner => (
                   <div key={winner} className="winner-item">
@@ -283,9 +289,11 @@ function App() {
                   </div>
                 ))}
               </div>
-              <button className="btn-secondary close-result-btn" onClick={closeAnimation}>
-                확인
-              </button>
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: 'var(--spacing-xl)' }}>
+                <button className="btn-primary" onClick={closeAnimation}>
+                  닫기
+                </button>
+              </div>
             </div>
           )}
         </div>
