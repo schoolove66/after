@@ -20,8 +20,20 @@ function App() {
   const [isSecretModalOpen, setIsSecretModalOpen] = useState(false);
   const [secretInput, setSecretInput] = useState('');
   
+  // 윤리 핵심가이드 게이트 상태
+  const [showGate, setShowGate] = useState(() => {
+    return localStorage.getItem('ethical_agreed') !== 'true';
+  });
+  const [isAgreed, setIsAgreed] = useState(false);
+  
   const clickCountRef = useRef(0);
   const clickTimeoutRef = useRef<number | null>(null);
+
+  const handleStartGame = () => {
+    if (!isAgreed) return;
+    localStorage.setItem('ethical_agreed', 'true');
+    setShowGate(false);
+  };
 
   // 초기 데이터 로드
   useEffect(() => {
@@ -152,10 +164,145 @@ function App() {
     setShowResultPopup(false);
   };
 
+  if (showGate) {
+    return (
+      <div className="gate-container" style={{ width: '100%', display: 'flex', justifyContent: 'center', padding: 'var(--spacing-md)' }}>
+        <div className="color-block-section navy gate-card" style={{ maxWidth: '850px', width: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xs)', alignItems: 'center', textAlign: 'center' }}>
+            <p className="eyebrow" style={{ color: 'var(--block-lime)', letterSpacing: '2px', fontWeight: 700, margin: 0 }}>
+              GENERATIVE AI ETHICS & INTEGRITY GUIDE
+            </p>
+            <h1 className="gate-title" style={{ color: 'var(--inverse-ink)', margin: 'var(--spacing-xs) 0', fontSize: '38px', fontWeight: 700 }}>
+              생성형 AI 윤리 핵심가이드
+            </h1>
+            <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '16px', maxWidth: '650px', margin: '0 auto var(--spacing-md) auto', lineHeight: 1.5 }}>
+              본 프로그램을 이용하기 전에 아래의 6가지 윤리 핵심가이드를 확인해 주세요.<br/>
+              학생 여러분이 스스로 윤리원칙을 지키며 주도적으로 학습할 수 있도록 내용을 준수해 주세요.
+            </p>
+          </div>
+
+          <div className="gate-rules" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)', margin: 'var(--spacing-md) 0' }}>
+            <div className="gate-rule-item" style={{ display: 'flex', gap: 'var(--spacing-md)', background: 'rgba(255,255,255,0.05)', padding: 'var(--spacing-md)', borderRadius: 'var(--rounded-md)', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div className="rule-number" style={{ fontFamily: 'var(--font-mono)', fontSize: '24px', color: 'var(--block-lime)', fontWeight: 700 }}>01</div>
+              <div className="rule-content">
+                <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--inverse-ink)', marginBottom: '6px' }}>가이드 1. 활용 목적</h3>
+                <h4 style={{ fontSize: '15px', color: 'var(--block-lime)', marginBottom: '8px', fontWeight: 600 }}>생성형 AI를 쓰기 전, '왜' 쓰는지 말할 수 있어야 해요.</h4>
+                <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>
+                  생성형 AI를 사용하기 전에 '지금 내가 왜 쓰려고 하지?'라고 스스로 물어보세요. 생성형 AI는 내 생각을 대신해주는 게 아니라, 내 생각을 도와주는 도구임을 기억하세요. 모든 공부에 생성형 AI가 필요한 것은 아니므로, 지금 하는 활동에 생성형 AI를 사용하는 것이 나의 학습에 정말 도움이 될지 먼저 고민해요.
+                </p>
+              </div>
+            </div>
+
+            <div className="gate-rule-item" style={{ display: 'flex', gap: 'var(--spacing-md)', background: 'rgba(255,255,255,0.05)', padding: 'var(--spacing-md)', borderRadius: 'var(--rounded-md)', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div className="rule-number" style={{ fontFamily: 'var(--font-mono)', fontSize: '24px', color: 'var(--block-lime)', fontWeight: 700 }}>02</div>
+              <div className="rule-content">
+                <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--inverse-ink)', marginBottom: '6px' }}>가이드 2. 주도적 학습</h3>
+                <h4 style={{ fontSize: '15px', color: 'var(--block-lime)', marginBottom: '8px', fontWeight: 600 }}>생성형 AI에게 물어보기 전, 내 생각을 먼저 말해요.</h4>
+                <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>
+                  막막할 때 바로 생성형 AI에게 묻고 싶은 마음이 들 수 있지만, 먼저 스스로 시도해 보아야 나의 성장에 도움이 돼요. 주제에 대해 내가 아는 것과 내 아이디어를 먼저 공책에 적거나 정리한 뒤에 생성형 AI를 활용하세요.
+                </p>
+              </div>
+            </div>
+
+            <div className="gate-rule-item" style={{ display: 'flex', gap: 'var(--spacing-md)', background: 'rgba(255,255,255,0.05)', padding: 'var(--spacing-md)', borderRadius: 'var(--rounded-md)', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div className="rule-number" style={{ fontFamily: 'var(--font-mono)', fontSize: '24px', color: 'var(--block-lime)', fontWeight: 700 }}>03</div>
+              <div className="rule-content">
+                <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--inverse-ink)', marginBottom: '6px' }}>가이드 3. 비판적 검증</h3>
+                <h4 style={{ fontSize: '15px', color: 'var(--block-lime)', marginBottom: '8px', fontWeight: 600 }}>생성형 AI가 틀릴 수 있다는 점을 알아요.</h4>
+                <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>
+                  생성형 AI는 틀린 정보를 마치 사실인 것처럼 제시하기도 하므로, 알려준 내용은 항상 '정말 맞을까?' 하고 한 번 더 확인하는 습관을 가져요. 중요한 내용일수록 책을 찾아보거나 선생님께 여쭤보는 등 다른 방법으로도 꼭 다시 확인하세요.
+                </p>
+              </div>
+            </div>
+
+            <div className="gate-rule-item" style={{ display: 'flex', gap: 'var(--spacing-md)', background: 'rgba(255,255,255,0.05)', padding: 'var(--spacing-md)', borderRadius: 'var(--rounded-md)', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div className="rule-number" style={{ fontFamily: 'var(--font-mono)', fontSize: '24px', color: 'var(--block-lime)', fontWeight: 700 }}>04</div>
+              <div className="rule-content">
+                <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--inverse-ink)', marginBottom: '6px' }}>가이드 4. 사고의 확장</h3>
+                <h4 style={{ fontSize: '15px', color: 'var(--block-lime)', marginBottom: '8px', fontWeight: 600 }}>생성형 AI와 함께 상상하며 내 생각을 더 크게 키워요.</h4>
+                <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>
+                  생성형 AI를 내 생각의 범위를 넓혀주는 도구로 사용해보세요. 생성형 AI의 결과물을 그대로 사용하지 않고, 나의 경험과 생각을 더하여 나만의 색깔을 담은 최종 결과물을 만들어요.
+                </p>
+              </div>
+            </div>
+
+            <div className="gate-rule-item" style={{ display: 'flex', gap: 'var(--spacing-md)', background: 'rgba(255,255,255,0.05)', padding: 'var(--spacing-md)', borderRadius: 'var(--rounded-md)', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div className="rule-number" style={{ fontFamily: 'var(--font-mono)', fontSize: '24px', color: 'var(--block-lime)', fontWeight: 700 }}>05</div>
+              <div className="rule-content">
+                <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--inverse-ink)', marginBottom: '6px' }}>가이드 5. 안전과 관계</h3>
+                <h4 style={{ fontSize: '15px', color: 'var(--block-lime)', marginBottom: '8px', fontWeight: 600 }}>나의 정보와 비밀을 말하지 않아요.</h4>
+                <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>
+                  내가 입력한 정보는 어디서 어떻게 사용될지 모르기 때문에 이름, 주소, 학교, 전화번호 같은 개인정보는 생성형 AI에게 알려주면 안돼요. 생성형 AI는 계산된 답변을 내놓는 프로그램이라 감정이 없어요. 나의 고민을 털어놓으며 지나치게 의지하기보다, 친구나 부모님, 선생님과의 실제 대화를 통해 마음을 나누어요.
+                </p>
+              </div>
+            </div>
+
+            <div className="gate-rule-item" style={{ display: 'flex', gap: 'var(--spacing-md)', background: 'rgba(255,255,255,0.05)', padding: 'var(--spacing-md)', borderRadius: 'var(--rounded-md)', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div className="rule-number" style={{ fontFamily: 'var(--font-mono)', fontSize: '24px', color: 'var(--block-lime)', fontWeight: 700 }}>06</div>
+              <div className="rule-content">
+                <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--inverse-ink)', marginBottom: '6px' }}>가이드 6. 투명성·윤리</h3>
+                <h4 style={{ fontSize: '15px', color: 'var(--block-lime)', marginBottom: '8px', fontWeight: 600 }}>생성형 AI의 도움을 받았다면 숨기지 않고 정직하게 이야기해요.</h4>
+                <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>
+                  어느 부분이 생성형 AI의 것이고 어느 부분이 나의 것인지 명확히 밝히는 것은 나 자신을 속이지 않는 정직한 태도예요. 생성형 AI를 쓴 사실을 정직하게 밝힐 때 나의 노력이 더 빛나고 가치 있게 인정받을 수 있어요.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--spacing-md)', marginTop: 'var(--spacing-md)' }}>
+            <label className="gate-agreement-label" style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', userSelect: 'none', textAlign: 'center' }}>
+              <input 
+                type="checkbox" 
+                checked={isAgreed} 
+                onChange={(e) => setIsAgreed(e.target.checked)}
+                style={{ width: '22px', height: '22px', cursor: 'pointer', accentColor: 'var(--block-lime)' }}
+              />
+              <span style={{ fontSize: '18px', fontWeight: 700, color: 'var(--inverse-ink)' }}>
+                이 윤리 핵심가이드를 빠짐없이 읽고 이를 지키겠습니다.
+              </span>
+            </label>
+
+            <button 
+              onClick={handleStartGame} 
+              className="btn-primary" 
+              style={{ 
+                backgroundColor: isAgreed ? 'var(--block-lime)' : '#485460', 
+                color: isAgreed ? '#000000' : 'rgba(255,255,255,0.4)', 
+                cursor: isAgreed ? 'pointer' : 'not-allowed',
+                width: '200px',
+                height: '48px',
+                marginTop: '12px',
+                fontSize: '18px',
+                fontWeight: 700,
+                borderRadius: 'var(--rounded-pill)',
+                transition: 'all 0.2s ease'
+              }}
+              disabled={!isAgreed}
+            >
+              시작 하기
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="color-block-section">
-        <h1 style={{ marginBottom: 0 }}>랜덤 발표자 뽑기</h1>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', marginBottom: 'var(--spacing-md)' }}>
+          <h1 style={{ marginBottom: 0 }}>랜덤 발표자 뽑기</h1>
+          <button 
+            onClick={() => {
+              setIsAgreed(false);
+              setShowGate(true);
+            }} 
+            className="btn-secondary" 
+            style={{ padding: '6px 16px', fontSize: '14px', height: 'auto', borderRadius: 'var(--rounded-pill)', display: 'inline-flex', gap: '6px', alignItems: 'center' }}
+          >
+            🛡️ 윤리 가이드 다시 보기
+          </button>
+        </div>
         <p className="eyebrow" style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)' }}>
           Fair & Random Selection
         </p>
